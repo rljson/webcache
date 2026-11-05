@@ -1,0 +1,5 @@
+* text=auto eol=lf
+.gg/gg.json merge=ours
+pubspec.lock merge=ours
+pnpm-lock.yaml merge=ours
+CHANGELOG.md merge=union
