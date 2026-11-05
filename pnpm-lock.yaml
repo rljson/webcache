@@ -11,6 +11,12 @@ importers:
       '@eslint/js':
         specifier: ^10.0.1
         version: 10.0.1(eslint@10.14.0)
+      '@rljson/dna-rljson':
+        specifier: ^0.3.2
+        version: 0.3.2
+      '@tssuite/helix-js':
+        specifier: ^0.5.1
+        version: 0.5.1
       '@types/node':
         specifier: ^26.6.6
         version: 26.6.6
@@ -104,6 +110,42 @@ packages:
     resolution: {integrity: sha512-IkO+/KEUvwbVpiURZg+P7zF74z5Jxe0UgJxVni+RtoHQ6IZieXaO02kmadomap/q+l6bc/jdPGGqTjhuZnuz1Q==}
     engines: {node: ^20.19.0 || ^22.13.0 || >=24}
 
+  '@ggdna/dna-blog@0.3.0':
+    resolution: {integrity: sha512-1LHLK0+3bOB6oCcDBEOsrcSN8tESeXw+o8d4nMBP8x7tVXENVe0IjsVykhXWs1jeQ8rgoIMDqgS7zyKW0VLlBQ==}
+    engines: {node: '>=22'}
+
+  '@ggdna/dna-clean-code@0.3.0':
+    resolution: {integrity: sha512-e2ej2IIm3LZZqvqmyrO/GE8D8o7PVpaCAU1ufTwLwyWZpDvOd223fvoSlTchFEhaDe4Je8OqGz0dJ9bGO5CNQA==}
+    engines: {node: '>=22'}
+
+  '@ggdna/dna-gg@1.4.0':
+    resolution: {integrity: sha512-hcfSNPhsGk+aA4bA+IRYrehZ66mW0wgVwph08eT4y8PE/afEjS8hvPmCMTEFEcMZK+SUBXNI+em970JgdkxOBA==}
+    engines: {node: '>=22'}
+
+  '@ggdna/dna-github@0.1.1':
+    resolution: {integrity: sha512-6K79BopuKYrZd0k017tVfJYK6+zeiz5bUkIxdcR9Bgv567AdWV42YzAHHFT/z2mPPl3sqCvNPAEXRLwUOCDbKQ==}
+    engines: {node: '>=22'}
+
+  '@ggdna/dna-guides@0.2.0':
+    resolution: {integrity: sha512-abcWI3W+b8U/uxSV6f9XGOHpaUXKHdqIbWgSczLq61ueOl0xSRJUZD+BeF6dasyV3blJ0Ir84vju6ioe8VTpyg==}
+    engines: {node: '>=22'}
+
+  '@ggdna/dna-index@0.2.0':
+    resolution: {integrity: sha512-azbA8fMhn01eSvEcjJc4aXrh8H0svc/lru2MJVAOaZ+sLnzm3bTrlQTxfcJ5sm/bidtMAh9+738AfAJcQdLP2A==}
+    engines: {node: '>=22'}
+
+  '@ggdna/dna-install@0.2.0':
+    resolution: {integrity: sha512-EIeGLKCSV2aBfdafgJK0ZrwHe/4t6B74MdLyw4UtbhrBivSZ2DYZfxGXohMffyOAxa8AJ1eUopPdhwyzYBKNjA==}
+    engines: {node: '>=22'}
+
+  '@ggdna/dna-readme@0.3.1':
+    resolution: {integrity: sha512-pChOh9A5peNDsjBhgGEqJR4et29LL7frLN6ou4PuKtGUd/oniqFCfVEVdaSeI4QGPZfNcf/re4W6fys/9WMbzA==}
+    engines: {node: '>=22'}
+
+  '@ggdna/dna-translate@0.3.0':
+    resolution: {integrity: sha512-Cc/CbCVItqRSeFz2sTtcH6E0TonT3qWpwqnvfouYKEePprzC5Gp5+rjinb9XzflcUTfXB9CjjXneLhGcueTMRw==}
+    engines: {node: '>=22'}
+
   '@humanfs/core@0.19.2':
     resolution: {integrity: sha512-UhXNm+CFMWcbChXywFwkmhqjs3PRCmcSa/hfBgLIb7oQ5HNb1wS0icWsGtSAUNgefHeI+eBrA8I1fxmbHsGdvA==}
     engines: {node: '>=18.18.0'}
@@ -151,6 +193,10 @@ packages:
 
   '@oxc-project/types@0.156.0':
     resolution: {integrity: sha512-1Duyg48TdJNdyhEB8Xn1L36bT9Pv6GUtlKjHxOys8xkaF/rQq3XJE+bAurSK/AgIz5mGFsb77cn9Pb20+WCScw==}
+
+  '@rljson/dna-rljson@0.3.2':
+    resolution: {integrity: sha512-WYR1D9xY3QtsPlm+yvVFnbIBo6eK5+H9WbKVPu3dQnOAHM5W2ZevfHCaCtqYOsM0VeubotvgMbbFSiT4EXrAIw==}
+    engines: {node: '>=22'}
 
   '@rolldown/binding-android-arm-eabi@1.2.16':
     resolution: {integrity: sha512-ia3DwAs0OsMGS7+IConptSiyk9pEXkOx/AbJ2n/lAGxH3QkWQus1t8d7gnAT38FCU2sQu8lUbeR6AiZFv4JxaA==}
@@ -259,6 +305,10 @@ packages:
     peerDependenciesMeta:
       rollup:
         optional: true
+
+  '@tssuite/helix-js@0.5.1':
+    resolution: {integrity: sha512-8i4zsO3uu3i9O8Ns5hFLVAtd3K4QiBP5v7QP7+s0an9idfC8KDt7AvuZkSZ2nh6iD5NKWN2f3ydRpblLFpv8pA==}
+    engines: {node: '>=22'}
 
   '@types/chai@5.2.3':
     resolution: {integrity: sha512-Mw558oeA9fFbv65/y4mHtXDs9bPnFMZAL/jxdPFUpOHHIXX91mcgEHbS5Lahr+pwZFR8A7GQleRWeI6cGFC2UA==}
@@ -1086,6 +1136,28 @@ snapshots:
       '@eslint/core': 1.2.1
       levn: 0.4.1
 
+  '@ggdna/dna-blog@0.3.0': {}
+
+  '@ggdna/dna-clean-code@0.3.0': {}
+
+  '@ggdna/dna-gg@1.4.0':
+    dependencies:
+      '@ggdna/dna-github': 0.1.1
+      '@ggdna/dna-index': 0.2.0
+      '@ggdna/dna-install': 0.2.0
+
+  '@ggdna/dna-github@0.1.1': {}
+
+  '@ggdna/dna-guides@0.2.0': {}
+
+  '@ggdna/dna-index@0.2.0': {}
+
+  '@ggdna/dna-install@0.2.0': {}
+
+  '@ggdna/dna-readme@0.3.1': {}
+
+  '@ggdna/dna-translate@0.3.0': {}
+
   '@humanfs/core@0.19.2':
     dependencies:
       '@humanfs/types': 0.15.0
@@ -1130,6 +1202,17 @@ snapshots:
   '@keyv/serialize@1.1.1': {}
 
   '@oxc-project/types@0.156.0': {}
+
+  '@rljson/dna-rljson@0.3.2':
+    dependencies:
+      '@ggdna/dna-blog': 0.3.0
+      '@ggdna/dna-clean-code': 0.3.0
+      '@ggdna/dna-gg': 1.4.0
+      '@ggdna/dna-guides': 0.2.0
+      '@ggdna/dna-index': 0.2.0
+      '@ggdna/dna-install': 0.2.0
+      '@ggdna/dna-readme': 0.3.1
+      '@ggdna/dna-translate': 0.3.0
 
   '@rolldown/binding-android-arm-eabi@1.2.16':
     optional: true
@@ -1183,6 +1266,8 @@ snapshots:
       '@types/estree': 1.0.10
       estree-walker: 2.0.2
       picomatch: 4.0.7
+
+  '@tssuite/helix-js@0.5.1': {}
 
   '@types/chai@5.2.3':
     dependencies:

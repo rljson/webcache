@@ -9,7 +9,7 @@ import { defineConfig } from 'eslint/config';
 import tseslint from 'typescript-eslint';
 
 export default defineConfig(
-  { ignores: ['**/*.js', 'coverage/', 'dist/', 'node_modules/'] },
+  { ignores: ['**/*.js', 'coverage/', 'dist/', 'node_modules/', '.claude/'] },
   js.configs.recommended,
   tseslint.configs.recommended,
 );
