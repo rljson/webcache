@@ -7,7 +7,7 @@
   "private": false,
   "license": "MIT",
   "engines": {
-    "node": ">=24"
+    "node": ">=22.14.0"
   },
   "repository": {
     "type": "git",
@@ -36,6 +36,15 @@
     "prepublishOnly": "pnpm run build"
   },
   "packageManager": "pnpm@10.32.1",
+  "dependencies": {
+    "@rljson/bs": "0.1.1",
+    "@rljson/hash": "0.0.21",
+    "@rljson/io": "0.0.88",
+    "@rljson/json": "0.0.23",
+    "@rljson/rljson": "0.0.89",
+    "@rljson/server": "0.2.0",
+    "undici": "^7.29.0"
+  },
   "devDependencies": {
     "@eslint/js": "^10.0.1",
     "@rljson/dna-rljson": "^0.3.2",
@@ -47,6 +56,8 @@
     "typescript-eslint": "^8.72.1",
     "vite": "^8.3.5",
     "vite-plugin-dts": "^5.1.2",
-    "vitest": "^5.1.0"
+    "vitest": "^5.1.0",
+    "@rljson/bs-fs": "0.1.0",
+    "@rljson/network": "0.0.28"
   }
 }
