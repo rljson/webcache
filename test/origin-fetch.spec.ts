@@ -5,8 +5,14 @@
 // found in the LICENSE file in the root of this package.
 
 import { createHash } from 'node:crypto';
-import { createServer, IncomingMessage, Server, ServerResponse } from 'node:http';
-import { AddressInfo, connect as netConnect } from 'node:net';
+import {
+  createServer,
+  IncomingMessage,
+  request as httpRequest,
+  Server,
+  ServerResponse,
+} from 'node:http';
+import { AddressInfo } from 'node:net';
 import { afterEach, beforeEach, describe, expect, it } from 'vitest';
 
 import { OriginFetch, WebcacheError } from '../src/index.ts';
@@ -277,24 +283,28 @@ describe('OriginFetch', () => {
 
   describe('with a proxy', () => {
     it('goes through the proxy', async () => {
-      const tunnels: string[] = [];
-      const proxy = createServer();
-      proxy.on('connect', (req, socket, head) => {
-        tunnels.push(req.url as string);
-        const [host, port] = (req.url as string).split(':');
-        const upstream = netConnect(Number(port), host, () => {
-          socket.write('HTTP/1.1 200 Connection Established\r\n\r\n');
-          upstream.write(head);
-          upstream.pipe(socket);
-          socket.pipe(upstream);
-        });
+      // A plain-http URL is handed to the proxy whole, as an HTTP proxy
+      // expects it; an https URL goes through a CONNECT tunnel instead, which
+      // needs a TLS origin this test does not have.
+      const forwarded: string[] = [];
+      const proxy = createServer((req, res) => {
+        forwarded.push(`${req.method} ${req.url}`);
+        const upstream = httpRequest(
+          req.url as string,
+          { method: req.method, headers: req.headers },
+          (answer) => {
+            res.writeHead(answer.statusCode as number, answer.headers);
+            answer.pipe(res);
+          },
+        );
+        req.pipe(upstream);
       });
       await new Promise<void>((r) => proxy.listen(0, '127.0.0.1', r));
       const proxyUrl = `http://127.0.0.1:${(proxy.address() as AddressInfo).port}`;
       try {
         const response = await origin({ proxy: proxyUrl }).open(`${base}/a.zip`);
         expect(await readAll(response.body)).toEqual(content);
-        expect(tunnels).toEqual([base.replace('http://', '')]);
+        expect(forwarded).toEqual([`GET ${base}/a.zip`]);
       } finally {
         proxy.closeAllConnections();
         await new Promise((r) => proxy.close(r));

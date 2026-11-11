@@ -43,21 +43,21 @@
     "@rljson/json": "0.0.23",
     "@rljson/rljson": "0.0.89",
     "@rljson/server": "0.2.0",
-    "undici": "^7.29.0"
+    "undici": "^8.12.4"
   },
   "devDependencies": {
     "@eslint/js": "^10.0.1",
+    "@rljson/bs-fs": "0.1.0",
     "@rljson/dna-rljson": "^0.3.2",
+    "@rljson/network": "0.0.28",
     "@tssuite/helix-js": "^0.5.1",
     "@types/node": "^26.6.6",
     "@vitest/coverage-v8": "^5.1.0",
     "eslint": "^10.14.0",
     "typescript": "^6.0.3",
-    "typescript-eslint": "^8.72.1",
-    "vite": "^8.3.5",
+    "typescript-eslint": "^8.72.2",
+    "vite": "^8.3.8",
     "vite-plugin-dts": "^5.1.2",
-    "vitest": "^5.1.0",
-    "@rljson/bs-fs": "0.1.0",
-    "@rljson/network": "0.0.28"
+    "vitest": "^5.1.0"
   }
 }
