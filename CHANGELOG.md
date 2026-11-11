@@ -19,5 +19,10 @@ the nodes of a network share.
   evict the least recently used; pinned entries stay.
 - `WebcacheHttpServer` serves `POST /fetch` and `GET /_webcache/health` to the
   programs of this machine only.
+- `poll(request, waitMs)` answers only complete content, else pending while
+  it keeps coming; asked again, it gives the content or the error that
+  stopped it. With `pendingAfterMs`, `POST /fetch` answers `202` with an
+  empty body for pending, so a requester with a short timeout gets content
+  of any size by asking again.
 - `WebcacheRoute` runs the webcache as a member of an `@rljson/server` `Node`;
   `webcacheHubStores()` lets a hub relay without keeping anything.

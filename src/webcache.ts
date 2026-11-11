@@ -192,6 +192,15 @@ export interface WebcacheResponse {
 }
 
 // #############################################################################
+/**
+ * The answer to {@link Webcache.poll}: the complete content, or pending
+ * while it is still on its way.
+ */
+export type WebcachePoll =
+  | { state: 'pending' }
+  | { state: 'ready'; response: WebcacheResponse };
+
+// #############################################################################
 /** An entry as it is shown. */
 export interface WebcacheEntryView extends WebcacheEntry {
   /** Its numbers. */
@@ -272,6 +281,26 @@ interface _Flight {
   ready: Promise<_Ready>;
 }
 
+// .............................................................................
+/** A request answered as pending: what it waits for, and how that ended. */
+interface _Poll {
+  /** Whether it joined a request that was on its way already. */
+  joined: boolean;
+
+  /** Resolves once the content is complete and stored. */
+  settled: Promise<_Ready>;
+
+  /** How it ended; unset while it is on its way. */
+  outcome?: { ready: _Ready } | { error: unknown };
+
+  /** When it ended. */
+  settledAt?: number;
+}
+
+// .............................................................................
+/** How long the outcome of a pending request waits to be asked for. */
+const _POLL_KEEP_MS = 60_000;
+
 // #############################################################################
 /**
  * Downloaded content as a cache that the nodes of a network share.
@@ -283,6 +312,7 @@ interface _Flight {
  */
 export class Webcache {
   private readonly _flights = new Map<string, _Flight>();
+  private readonly _polls = new Map<string, _Poll>();
   private readonly _reading = new Map<string, Set<BlobFill>>();
   private readonly _claimsSeen = new Map<string, { at: number; since: number }>();
   private readonly _clock: () => number;
@@ -352,6 +382,50 @@ export class Webcache {
    */
   fetch(request: WebcacheRequest): Promise<WebcacheResponse> {
     return this._fetch(request, true);
+  }
+
+  // ...........................................................................
+  /**
+   * Answers a request only with complete content. Content that is held, or
+   * gets complete within `waitMs`, is ready; anything else is pending, and
+   * keeps coming meanwhile. Asked again with the same request, it answers
+   * the content once it is complete — or fails with what stopped it. The
+   * outcome waits a minute to be asked for.
+   * @param request - What is asked for.
+   * @param waitMs - How long to wait for the content to complete.
+   * @returns Ready with the complete content, or pending.
+   */
+  async poll(request: WebcacheRequest, waitMs: number): Promise<WebcachePoll> {
+    if (this._closed) throw new WebcacheError('closed', 'The webcache is closed');
+    const { key, keyHash } = Webcache._parse(request);
+    const consumer = request.consumer ?? 'default';
+    this._forgetOldPolls();
+    let poll = this._polls.get(keyHash);
+    if (!poll) {
+      const flight = this._flights.get(keyHash);
+      poll = this._startPoll(
+        flight ?? this._startFlight(key, keyHash, request, consumer),
+        flight !== undefined,
+      );
+      this._polls.set(keyHash, poll);
+    }
+
+    let timer: ReturnType<typeof setTimeout> | undefined;
+    await Promise.race([
+      poll.settled.catch(_ignore),
+      new Promise((resolve) => (timer = setTimeout(resolve, waitMs))),
+    ]);
+    clearTimeout(timer);
+
+    const outcome = poll.outcome;
+    if (outcome === undefined) return { state: 'pending' };
+    this._polls.delete(keyHash);
+    if ('error' in outcome) throw outcome.error;
+    const source = poll.joined ? 'local' : outcome.ready.source;
+    return {
+      state: 'ready',
+      response: this._respond(outcome.ready, source, key, keyHash, consumer, true),
+    };
   }
 
   // ...........................................................................
@@ -586,6 +660,7 @@ export class Webcache {
   /** Stops every download and sweep, and writes the numbers. */
   async close(): Promise<void> {
     this._closed = true;
+    this._polls.clear();
     clearInterval(this._sweepTimer);
     for (const flight of this._flights.values()) flight.abort?.();
     this._fleet = undefined;
@@ -644,6 +719,42 @@ export class Webcache {
       end,
     );
     return flight;
+  }
+
+  // ...........................................................................
+  /**
+   * Follows a flight for {@link poll} until its content is stored.
+   * @param flight - The flight.
+   * @param joined - Whether the flight was on its way already.
+   * @returns The poll; its outcome is set once the flight ended.
+   */
+  private _startPoll(flight: _Flight, joined: boolean): _Poll {
+    const poll: _Poll = {
+      joined,
+      settled: flight.ready.then(async (ready) => {
+        await ready.finished;
+        return ready;
+      }),
+    };
+    // Set before any waiter of `settled` resumes: they are registered later.
+    const settle = (outcome: _Poll['outcome']) => {
+      poll.outcome = outcome;
+      poll.settledAt = this._clock();
+    };
+    poll.settled.then(
+      (ready) => settle({ ready }),
+      (error: unknown) => settle({ error }),
+    );
+    return poll;
+  }
+
+  // ...........................................................................
+  /** Forgets the outcomes nobody asked for in time. */
+  private _forgetOldPolls(): void {
+    const oldest = this._clock() - _POLL_KEEP_MS;
+    for (const [keyHash, poll] of this._polls) {
+      if (poll.settledAt !== undefined && poll.settledAt < oldest) this._polls.delete(keyHash);
+    }
   }
 
   // ...........................................................................

@@ -257,6 +257,56 @@ describe('WebcacheHttpServer', () => {
     });
   });
 
+  describe('POST /fetch with pendingAfterMs', () => {
+    let pending: WebcacheHttpServer;
+    let pendingBase: string;
+
+    const postPending = (body: unknown) =>
+      fetch(`${pendingBase}/fetch`, {
+        method: 'POST',
+        headers: { 'content-type': 'application/json' },
+        body: JSON.stringify(body),
+      });
+
+    beforeEach(async () => {
+      pending = await WebcacheHttpServer.listen(webcache, { port: 0, pendingAfterMs: 20 });
+      pendingBase = `http://127.0.0.1:${pending.port}`;
+    });
+
+    afterEach(async () => {
+      await pending.close();
+    });
+
+    it('answers 202 while the content comes, then the complete content', async () => {
+      originTrickle = true;
+      const body = { url: `${originUrl}/a.zip`, consumer: 'test' };
+      const first = await postPending(body);
+      expect([first.status, first.headers.get('content-length')]).toEqual([202, '0']);
+      expect(await first.text()).toBe('');
+      let answer = first;
+      while (answer.status === 202) {
+        await new Promise((r) => setTimeout(r, 20));
+        answer = await postPending(body);
+      }
+      expect(answer.status).toBe(200);
+      expect(answer.headers.get('content-length')).toBe(String(content.length));
+      expect(answer.headers.get('x-webcache-source')).toBe('cloud');
+      expect(Buffer.from(await answer.arrayBuffer())).toEqual(content);
+
+      const again = await postPending(body);
+      expect([again.status, again.headers.get('x-webcache-source')]).toEqual([200, 'local']);
+      await again.arrayBuffer();
+      expect(webcache.stats.totals().byConsumer.test.requests).toBe(2);
+    });
+
+    it('answers errors as JSON with their reason', async () => {
+      originStatus = 403;
+      const refused = await postPending({ url: `${originUrl}/a.zip` });
+      expect(refused.status).toBe(502);
+      expect(await refused.json()).toMatchObject({ error: 'cloud-status', upstreamStatus: 403 });
+    });
+  });
+
   describe('GET /_webcache/health', () => {
     it('says the webcache is up, and for which node', async () => {
       const response = await fetch(`${base}/_webcache/health`);

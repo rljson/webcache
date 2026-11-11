@@ -9,7 +9,7 @@
   "name": "@rljson/webcache",
 
   // 1-2 sentence summary about this repo.
-  "summary": "Downloaded web content as a cache the nodes of an rljson network share: own store → fleet (peer reads, hub relay) → cloud; claims so simultaneous requesters download once; CDC-block ingest with resume, size/MD5 checks; loopback HTTP endpoint; sliding lifetime, disk budget, sweep. API: Webcache, WebcacheHttpServer, WebcacheRoute, webcacheHubStores, Fleet.",
+  "summary": "Downloaded web content as a cache the nodes of an rljson network share: own store → fleet (peer reads, hub relay) → cloud; claims so simultaneous requesters download once; CDC-block ingest with resume, size/MD5 checks; loopback HTTP endpoint (streamed, or complete only with 202 to ask again); sliding lifetime, disk budget, sweep. API: Webcache, WebcacheHttpServer, WebcacheRoute, webcacheHubStores, Fleet.",
 
   // 1-3 bullet points: the problem space.
   "domain": [
@@ -32,7 +32,7 @@
 
     // "<repo-b>": "why / API"
     "usedBy": {
-      "cos-one-client": "Webcache, WebcacheHttpServer (+ /graphic route), WebcacheRoute, webcacheHubStores"
+      "cos-one-client": "Webcache, WebcacheHttpServer (pendingAfterMs: 202 until a file is complete), WebcacheRoute, webcacheHubStores"
     }
   }
 }

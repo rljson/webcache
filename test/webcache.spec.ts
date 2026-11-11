@@ -473,6 +473,86 @@ describe('Webcache', () => {
     });
   });
 
+  describe('poll(request, waitMs)', () => {
+    /** Polls until the content is ready, as a requester asking again would. */
+    const pollUntilReady = async (node: TestNode, request: Parameters<Webcache['poll']>[0]) => {
+      for (;;) {
+        const answer = await node.webcache.poll(request, 20);
+        if (answer.state === 'ready') return answer.response;
+        await sleep(5);
+      }
+    };
+
+    it('answers what it holds, or gets complete within the wait, at once', async () => {
+      const a = await addNode('a');
+      const first = await a.webcache.poll({ url: url('/c.png') }, 2_000);
+      expect(first.state).toBe('ready');
+      const response = (first as { response: WebcacheResponse }).response;
+      expect([response.source, response.size]).toEqual(['cloud', files['/c.png'].length]);
+      expect(await readAll(response.body())).toEqual(files['/c.png']);
+      const second = await a.webcache.poll({ url: url('/c.png') }, 0);
+      expect(second.state === 'ready' && second.response.source).toBe('local');
+      expect(hits.length).toBe(1);
+    });
+
+    it('answers pending while the content comes, then the complete content', async () => {
+      const a = await addNode('a');
+      cloud.trickle = true;
+      const request = { url: url('/a.zip'), consumer: 'test' };
+      expect(await a.webcache.poll(request, 0)).toEqual({ state: 'pending' });
+      expect(await a.webcache.poll(request, 0)).toEqual({ state: 'pending' });
+      const response = await pollUntilReady(a, request);
+      expect([response.source, response.size]).toEqual(['cloud', files['/a.zip'].length]);
+      expect(await readAll(response.body())).toEqual(files['/a.zip']);
+      expect(hits.length).toBe(1);
+      const stats = a.webcache.stats.of(response.keyHash);
+      expect([stats?.requests, stats?.hits.cloud]).toEqual([1, 1]);
+    });
+
+    it('answers the failure of the content once, then tries again', async () => {
+      const a = await addNode('a');
+      cloud.status = 500;
+      cloud.delayMs = 50;
+      const request = { url: url('/c.png') };
+      expect(await a.webcache.poll(request, 0)).toEqual({ state: 'pending' });
+      await expect(pollUntilReady(a, request)).rejects.toMatchObject({ upstreamStatus: 500 });
+      cloud.status = undefined;
+      expect((await pollUntilReady(a, request)).source).toBe('cloud');
+      expect(hits.length).toBe(2);
+    });
+
+    it('joins a request that is on its way, and reads it as local', async () => {
+      const a = await addNode('a');
+      cloud.delayMs = 50;
+      const fetching = fetchAll(a, '/b.png');
+      await sleep(10);
+      const response = await pollUntilReady(a, { url: url('/b.png') });
+      expect(response.source).toBe('local');
+      expect((await fetching).response.source).toBe('cloud');
+      expect(hits.length).toBe(1);
+    });
+
+    it('forgets an outcome nobody asked for within a minute', async () => {
+      now = 1_000_000;
+      const a = await addNode('a');
+      cloud.delayMs = 50;
+      const request = { url: url('/c.png') };
+      expect(await a.webcache.poll(request, 0)).toEqual({ state: 'pending' });
+      await sleep(150);
+      now += 61_000;
+      const answer = await a.webcache.poll(request, 1_000);
+      expect(answer.state === 'ready' && answer.response.source).toBe('local');
+    });
+
+    it('refuses requests once closed', async () => {
+      const a = await addNode('a');
+      await a.webcache.close();
+      await expect(a.webcache.poll({ url: url('/c.png') }, 0)).rejects.toMatchObject({
+        reason: 'closed',
+      });
+    });
+  });
+
   describe('entries()', () => {
     it('lists what it holds, with numbers and the end of its lifetime', async () => {
       now = 1_000_000;

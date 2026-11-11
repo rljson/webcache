@@ -37,6 +37,14 @@ export interface WebcacheHttpOptions {
 
   /** The version the health check names. */
   version?: string;
+
+  /**
+   * Answer `POST /fetch` only with complete content: `202` with an empty
+   * body when the content is not complete after this long, while it keeps
+   * coming; the requester asks again with the same body. When omitted, the
+   * content is sent as it arrives.
+   */
+  pendingAfterMs?: number;
 }
 
 // .............................................................................
@@ -159,7 +167,8 @@ export const sendWebcacheResponse = (
     };
     res.on('close', () => {
       // The requester hung up: stop reading for it; the download goes on.
-      if (!body.destroyed) body.destroy();
+      // Destroying a stream that ended or broke already does nothing.
+      body.destroy();
       done();
     });
     body.on('error', (error) => res.destroy(error));
@@ -213,7 +222,8 @@ const _sendJson = (res: ServerResponse, status: number, body: unknown): void => 
  * The webcache over HTTP, for the programs of this machine:
  *
  * - `POST /fetch` with `{ url, key?, size?, consumer?, headers? }` answers the
- *   content — from this node, the fleet or the cloud
+ *   content — from this node, the fleet or the cloud; with `pendingAfterMs`,
+ *   only complete content, else `202` to ask again
  * - `GET /_webcache/health` says whether the webcache is up
  *
  * It listens on 127.0.0.1 and refuses requests naming another host, so no
@@ -296,8 +306,17 @@ export class WebcacheHttpServer {
         if (typeof body !== 'object' || body === null || Array.isArray(body)) {
           throw new WebcacheError('bad-request', 'The request body must be a JSON object');
         }
-        const response = await webcache.fetch(body as WebcacheRequest);
-        await sendWebcacheResponse(req, res, response);
+        const request = body as WebcacheRequest;
+        if (options.pendingAfterMs === undefined) {
+          await sendWebcacheResponse(req, res, await webcache.fetch(request));
+          return;
+        }
+        const answer = await webcache.poll(request, options.pendingAfterMs);
+        if (answer.state === 'pending') {
+          res.writeHead(202, { 'content-length': '0' }).end();
+          return;
+        }
+        await sendWebcacheResponse(req, res, answer.response);
         return;
       }
       if (path === '/_webcache/health') {

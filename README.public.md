@@ -46,6 +46,14 @@ arrive —, `finished` (resolves once the content is stored here) and
 Requests for the same key share one answer; every requester but the first
 reads it as `local`.
 
+`webcache.poll(request, waitMs)` answers only complete content: `{ state:
+'ready', response }` when the content is held or gets complete within
+`waitMs`, else `{ state: 'pending' }` while it keeps coming. The same
+request asked again joins it and gets the content once it is complete — or
+fails with the error that stopped it, once. An outcome nobody asks for
+within a minute is forgotten. A ready answer counts as one request, however
+often it was asked for.
+
 A request fails with a `WebcacheError` whose `reason` decides the HTTP
 status:
 
@@ -70,7 +78,7 @@ Further: `attach(fleet)` / `detach()`, `entries()`, `remove(keyHash)`,
 
 ## WebcacheHttpServer
 
-`await WebcacheHttpServer.listen(webcache, { port, host?, routes?, version? })`
+`await WebcacheHttpServer.listen(webcache, { port, host?, routes?, version?, pendingAfterMs? })`
 serves the webcache to the programs of this machine. It binds to `127.0.0.1`
 and answers 421 to any request whose `Host` is not this machine.
 
@@ -79,6 +87,10 @@ and answers 421 to any request whose `Host` is not this machine.
   `X-Webcache-Key-Hash`, and an `ETag` of the blob once stored. A single
   `Range` gives 206, a range past the end 416. Errors answer JSON
   `{ error, message, upstreamStatus? }` with the status above.
+- With `pendingAfterMs`, `POST /fetch` answers only complete content, by
+  `poll(request, pendingAfterMs)`: `200` with the whole content, or `202`
+  with an empty body while it is still on its way — the requester asks again
+  with the same body.
 - `GET /_webcache/health`: `{ ok, nodeId, version, fleet }`.
 - `routes` are asked first: build further endpoints with `readJsonBody`,
   `sendWebcacheResponse` and `sendWebcacheError`.
