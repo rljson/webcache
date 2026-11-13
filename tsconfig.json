@@ -18,5 +18,8 @@
     "noUnusedParameters": true,
     "noFallthroughCasesInSwitch": true
   },
-  "include": ["src", "test", "*.mts"]
+  "include": ["src", "test", "*.mts"],
+  // gg writes this spec at every publish, importing its version file without
+  // the file extension that nodenext requires. vitest still runs it.
+  "exclude": ["test/*_version.spec.ts"]
 }
