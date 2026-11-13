@@ -1,13 +1,13 @@
 {
   "name": "@rljson/webcache",
-  "version": "0.0.1",
+  "version": "0.0.2",
   "description": "The RLJSON webcache provides downloaded web content like media, images and texts as a local requestable cache. Based on a blob store (rljson/bs), it serves downloaded data through an rljson network (rljson/server, rljson/network), so that other rljson clients can retrieve it from the fleet first before downloading it on their own.",
   "homepage": "https://github.com/rljson/webcache",
   "bugs": "https://github.com/rljson/webcache/issues",
   "private": false,
   "license": "MIT",
   "engines": {
-    "node": ">=24"
+    "node": ">=22.14.0"
   },
   "repository": {
     "type": "git",
@@ -36,16 +36,27 @@
     "prepublishOnly": "pnpm run build"
   },
   "packageManager": "pnpm@10.32.1",
+  "dependencies": {
+    "@rljson/bs": "0.1.1",
+    "@rljson/hash": "0.0.21",
+    "@rljson/io": "0.0.88",
+    "@rljson/json": "0.0.23",
+    "@rljson/rljson": "0.0.89",
+    "@rljson/server": "0.2.0",
+    "undici": "^8.12.4"
+  },
   "devDependencies": {
     "@eslint/js": "^10.0.1",
+    "@rljson/bs-fs": "0.2.0",
     "@rljson/dna-rljson": "^0.3.2",
+    "@rljson/network": "0.0.28",
     "@tssuite/helix-js": "^0.5.1",
     "@types/node": "^26.6.6",
     "@vitest/coverage-v8": "^5.1.0",
     "eslint": "^10.14.0",
     "typescript": "^6.0.3",
-    "typescript-eslint": "^8.72.1",
-    "vite": "^8.3.5",
+    "typescript-eslint": "^8.72.2",
+    "vite": "^8.3.8",
     "vite-plugin-dts": "^5.1.2",
     "vitest": "^5.1.0"
   }
