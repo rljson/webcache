@@ -1,4 +1,2 @@
 allowBuilds:
   esbuild: true
-overrides:
-  "@rljson\/bs-fs": link:./.gg/ts_links/@rljson/bs-fs

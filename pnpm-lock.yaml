@@ -4,9 +4,6 @@ settings:
   autoInstallPeers: true
   excludeLinksFromLockfile: false
 
-overrides:
-  '@rljson/bs-fs': link:./.gg/ts_links/@rljson/bs-fs
-
 importers:
 
   .:
@@ -37,8 +34,8 @@ importers:
         specifier: ^10.0.1
         version: 10.0.1(eslint@10.14.0)
       '@rljson/bs-fs':
-        specifier: link:.gg\ts_links\@rljson\bs-fs
-        version: link:.gg/ts_links/@rljson/bs-fs
+        specifier: 0.2.0
+        version: 0.2.0
       '@rljson/dna-rljson':
         specifier: ^0.3.2
         version: 0.3.2
@@ -212,8 +209,8 @@ packages:
   '@jridgewell/remapping@2.3.5':
     resolution: {integrity: sha512-LI9u/+laYG4Ds1TDKSJW2YPrIlcVYOwi2fUC6xB43lueCjgxV4lffOCZCtYFiH6TNOX+tQKXx97T4IKHbhyHEQ==}
 
-  '@jridgewell/resolve-uri@3.1.2':
-    resolution: {integrity: sha512-bRISgCIjP20/tbWSPWMEi54QVPRZExkuD9lJL+UIxUKtwVJA8wW1Trb1jMs1RFXo1CBTNZ/5hpC9QvmKWdopKw==}
+  '@jridgewell/resolve-uri@3.1.3':
+    resolution: {integrity: sha512-lhTtjtoEArWBjismtfS761S9Hlyn+nIZqOZVYoZ1Xn82PMNMVnk+jj/NhC4fAXGTs7ydONcJiR5vyQBTMDu27g==}
     engines: {node: '>=6.0.0'}
 
   '@jridgewell/sourcemap-codec@1.6.0':
@@ -240,6 +237,10 @@ packages:
 
   '@oxc-project/types@0.156.0':
     resolution: {integrity: sha512-1Duyg48TdJNdyhEB8Xn1L36bT9Pv6GUtlKjHxOys8xkaF/rQq3XJE+bAurSK/AgIz5mGFsb77cn9Pb20+WCScw==}
+
+  '@rljson/bs-fs@0.2.0':
+    resolution: {integrity: sha512-B70tpvF719EdMHdE7Ktf7L3hFFskj3DLhtAg+PJjGfC8WzGdkf6sgzPJyICqKM0H8zFMfHFOJpgn9BJ0TzSHbg==}
+    engines: {node: '>=22.14.0'}
 
   '@rljson/bs@0.1.1':
     resolution: {integrity: sha512-bXQiHb63miObIN8HoZzbk7UmtRVRnPgR6kjtOkOyVHCnUOAy9KURocvjPzfRTQefDWZWebdwLESH08hVQTIPbw==}
@@ -1314,13 +1315,13 @@ snapshots:
       '@jridgewell/gen-mapping': 0.3.13
       '@jridgewell/trace-mapping': 0.3.31
 
-  '@jridgewell/resolve-uri@3.1.2': {}
+  '@jridgewell/resolve-uri@3.1.3': {}
 
   '@jridgewell/sourcemap-codec@1.6.0': {}
 
   '@jridgewell/trace-mapping@0.3.31':
     dependencies:
-      '@jridgewell/resolve-uri': 3.1.2
+      '@jridgewell/resolve-uri': 3.1.3
       '@jridgewell/sourcemap-codec': 1.6.0
 
   '@keyv/bigmap@1.3.1(keyv@5.6.0)':
@@ -1339,6 +1340,13 @@ snapshots:
     optional: true
 
   '@oxc-project/types@0.156.0': {}
+
+  '@rljson/bs-fs@0.2.0':
+    dependencies:
+      '@rljson/bs': 0.1.1
+      '@rljson/hash': 0.0.21
+      '@rljson/json': 0.0.23
+      '@rljson/rljson': 0.0.89
 
   '@rljson/bs@0.1.1':
     dependencies:
