@@ -288,37 +288,62 @@ ticket folder reads `nextCommitMessage`; `gg one do commit` does not.
 
 ## Commit
 
-```bash
-gg do commit
-```
-
-Every repo gets its own message. When repos of the ticket depend on each
-other, never commit them with one `-m` for all. Commit each repo on its own
-with its `nextCommitMessage` (see
-[Describe every repo in its own terms](#describe-every-repo-in-its-own-terms)):
+Commit from the ticket folder, all repos of the ticket at once:
 
 ```bash
-cd repo1
-gg one do commit -m"<nextCommitMessage of repo1>"
+gg can commit
+gg do commit --no-interactive
 ```
 
-`gg do commit` without `-m` offers the same messages, but in an editor the
-user has to confirm — leave that way to the user.
+`gg can commit` checks the repos in parallel and records the result of
+each one, so `gg do commit` only confirms it and commits. With
+`--no-interactive` every repo gets its own `nextCommitMessage` (see
+[Describe every repo in its own terms](#describe-every-repo-in-its-own-terms))
+and nothing is asked; repos without one get the ticket description.
 
-`gg do commit` and `gg can commit` act on all repos of the ticket. When you
-are inside a single repo instead of the ticket folder, use the standalone
-form on that repo:
+Never loop over the repos with `gg one can commit` or `gg one do commit`:
+the loop checks one repo after the other and takes many times as long.
+The `gg one` form is meant for a standalone repo that belongs to no
+ticket.
+
+`gg can commit` stops at the first red repo. Fix the cause, then run it
+again for the whole ticket — the repos that passed before only confirm
+their result.
+
+Use `-m"<message>"` only when every repo shall get the same message and
+no repo of the ticket depends on another. `gg do commit` without
+`--no-interactive` opens the messages of all repos in an editor the user
+has to confirm — leave that way to the user.
+
+## Upgrade the Dart SDK
+
+When a Dart repo shall use the newest SDK, never raise `environment: sdk:`
+in `pubspec.yaml` by hand. Install the newest Dart SDK first, then run in
+the repo:
 
 ```bash
-gg one can commit
-gg one do commit
+dart --version   # e.g. Dart SDK version: 3.14.0
+dart migrate --apply --target-sdk=3.14.0
 ```
+
+`dart migrate` raises the lower bound of the SDK constraint one language
+version after the other and applies the fixes each step needs. Without
+`--target-sdk` it goes one version only; pass the installed version to
+reach it in one run — it cannot go beyond it. `--dry-run` instead of
+`--apply` shows the changes first. Afterwards check and commit the ticket as
+described in [Commit](#commit).
 
 ## Push
 
 ```bash
 gg do push
 ```
+
+`gg do push` merges the main branches into the feature branches, checks
+and pushes. It upgrades no dependency: new versions, major versions
+included, arrive through the nightly build (`gg do maintain --nightly`).
+Does the ticket need a newer version of a dependency right away? Raise
+its constraint as part of the change, or run `gg do push --upgrade`.
 
 ## Review
 
@@ -369,3 +394,8 @@ terminal must stay outside the ticket — `-i` names the ticket instead.
 
 gg triggers the pull request merge and publishes the changes to the
 registry. Finally the version tag is created and pushed.
+
+A publish resolves the dependencies (`dart pub get`, `<pm> install`) and
+analyzes; it upgrades nothing and does not run the tests again — they
+passed at the commit. Only the constraints on repos the same ticket
+publishes change.

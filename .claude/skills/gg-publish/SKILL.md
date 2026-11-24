@@ -7,6 +7,8 @@ description: Prepares the release of a reviewed ticket and hands `gg do publish`
 
 `gg do publish` merges the pull requests, publishes to the registry and
 creates and pushes the version tags. It is interactive — the user runs it.
+It resolves and analyzes every repo, but upgrades nothing and does not run
+the tests again.
 
 ## 1. Check the preconditions
 
