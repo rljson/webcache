@@ -2,6 +2,16 @@
 
 ## [Unreleased]
 
+### The rljson DNA without the prompts hook
+
+- `@rljson/dna-rljson` 0.4.0: the Claude Code hook that would keep every
+  prompt in a project management repo is gone, with `.claude/hooks` and
+  `.claude/settings.json`. New are the architecture guide, the
+  `/gg-review-architecture` skill and the gg guides and skills of dna-gg
+  1.9, and a `.pubignore`.
+
+## [0.0.2]
+
 The first version of `@rljson/webcache`: downloaded content as a cache that
 the nodes of a network share.
 
