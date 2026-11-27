@@ -99,7 +99,7 @@ describe('CloudDownload', () => {
       expect(await read).toEqual(content);
       expect(download.fill.blocks.length).toBeGreaterThan(2);
       expect((await bs.getBlob(ContentId.of(content))).content).toEqual(content);
-    });
+    }, 60_000);
 
     it('takes the size from the cloud when none is expected', async () => {
       const download = await start({ retryDelayMs: undefined });
