@@ -1,0 +1,20 @@
+# .gitignore
+node_modules/
+dist/
+coverage/
+.DS_Store
+.gg/*
+!.gg/gg.json
+.gg/publish_config.json
+.gg/publish_state.json
+.gg/gg-publish.json
+.gg/pubspec_overrides_backup.yaml
+.gg/pnpm_workspace_backup.yaml
+
+# dna-readme
+/doc/*/guides/
+/doc/*/templates/
+/scripts/
+
+# dna-gg
+/CLAUDE.md

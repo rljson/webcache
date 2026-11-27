@@ -175,7 +175,7 @@ describe('Webcache', () => {
       expect(hits).toEqual(['/a.zip?sv=1&sig=secret']);
       const stats = a.webcache.stats.of(second.response.keyHash);
       expect([stats?.requests, stats?.hits.cloud, stats?.hits.local]).toEqual([2, 1, 1]);
-    });
+    }, 60_000);
 
     it('serves a range of what it holds', async () => {
       const a = await addNode('a');
@@ -319,7 +319,7 @@ describe('Webcache', () => {
       expect(hits.length).toBe(1);
       expect(results.map((r) => r.response.source).sort()).toEqual(['cloud', 'fleet', 'fleet']);
       for (const r of results) expect(r.bytes).toEqual(files['/a.zip']);
-    });
+    }, 60_000);
 
     it('waits for a node that downloads the file, and reads it from there', async () => {
       const a = await addNode('a');

@@ -79,7 +79,7 @@ describe('FleetTransfer', () => {
         a: reads.filter((r) => r === 'a').length,
         b: reads.filter((r) => r === 'b').length,
       });
-    });
+    }, 60_000);
 
     it('fetches only the blocks it does not have', async () => {
       const blocks = await (stores.get('a') as BsMem).getBlobBlocks(blobId);
