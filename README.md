@@ -113,8 +113,8 @@ Before 1.0 — the API may change between minor versions.
 
 ## Contributing
 
-Follow [the develop guide](doc/guides/develop-guide.md) and
-[the rljson guide](doc/guides/rljson-guide.md).
+Follow [the develop guide](doc/en/guides/develop-guide.md) and
+[the rljson guide](doc/en/guides/rljson-guide.md).
 
 ## License
 

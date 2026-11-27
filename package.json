@@ -48,7 +48,7 @@
   "devDependencies": {
     "@eslint/js": "^10.0.1",
     "@rljson/bs-fs": "0.2.0",
-    "@rljson/dna-rljson": "^0.3.2",
+    "@rljson/dna-rljson": "^0.4.0",
     "@rljson/network": "0.0.28",
     "@tssuite/helix-js": "^0.5.1",
     "@types/node": "^26.6.6",
