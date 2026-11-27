@@ -2,4 +2,4 @@
 // Kept in sync by test/webcache_version.spec.ts.
 
 /** The version of the `@rljson/webcache` package. */
-export const webcacheVersion = '0.0.2';
+export const webcacheVersion = '0.0.3';
