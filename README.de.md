@@ -116,8 +116,8 @@ Vor 1.0 — die API kann sich zwischen Minor-Versionen ändern.
 
 ## Mitwirken
 
-Siehe [den Develop Guide](doc/guides/develop-guide.md) und
-[den rljson Guide](doc/guides/rljson-guide.md).
+Siehe [den Develop Guide](doc/en/guides/develop-guide.md) und
+[den rljson Guide](doc/en/guides/rljson-guide.md).
 
 ## Lizenz
 
